@@ -3,10 +3,9 @@ from .utils import get_current_value, put_new_value
 class UnitiRemote:
     """A scaled-down API for functions that only appear on the remote."""
 
-    def __init__(self):
-        self.ip_address = None
-        self.base_url = f"http://{self.ip_address}:15081/"
-        return self
+    def __init__(self, ip_address, port=15081):
+        self.ip_address = ip_address
+        self.base_url = f"http://{self.ip_address}:{port}/"
 
     def __str__(self):
         return f"Remote to control Uniti device at {self.ip_address}"
