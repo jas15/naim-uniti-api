@@ -64,18 +64,25 @@ class UnitiRemote:
 
         return self.power_status()
 
+    def _control_playback(self, action):
+        return get_current_value(
+                self.base_url,
+                "nowplaying",
+                params={ "cmd": action }
+        )
+
+    def play_pause(self):
+            return self._control_playback("playpause")
+
     def previous_track(self):
-        # TODO implement
-        return self.current_track()
+        return self._control_playback("prev")
 
     def next_track(self):
-        # TODO implement
-        return self.current_track()
+        return self._control_playback("next")
 
-    def current_track(self):
+    def now_playing(self):
         """Returns information about the current track."""
-        # TODO implement
-        return None
+        return get_current_value(self.base_url, "nowplaying")
 
     def home(self):
         """Show the Home screen on the Uniti device."""
