@@ -13,11 +13,23 @@ class UnitiRemote:
     def current_volume(self):
         return int(get_current_value(self.base_url, "levels/room", "volume"))
 
-    def volume_up(self):
-        return self.current_volume()
+    def _change_volume(self, new_value):
+        data = { "volume": new_value }}
+        return put_new_value(self.base_url, "levels/room", data=data)
 
-    def volume_down(self):
-        return self.current_volume()
+    def volume_up(self, increment=1):
+        vol = self.current_volume()
+        if vol is not None:
+            return self._change_volume(vol + increment)
+
+        return None
+
+    def volume_down(self, increment=1):
+        vol = self.current_volume()
+        if vol is not None:
+            return self._change_volume(vol - increment)
+
+        return None
 
     def mute_status(self):
         return int(get_current_value(self.base_url, "levels/room", "mute"))
@@ -53,24 +65,30 @@ class UnitiRemote:
         return self.power_status()
 
     def previous_track(self):
+        # TODO implement
         return self.current_track()
 
     def next_track(self):
+        # TODO implement
         return self.current_track()
 
     def current_track(self):
         """Returns information about the current track."""
+        # TODO implement
         return None
 
     def home(self):
         """Show the Home screen on the Uniti device."""
+        # TODO implement
         return None
 
     def favourite_button(self):
         """Hit the favourite button on the remote."""
+        # TODO implement
         return None
 
     def change_brightness(self):
         """Change the brightness level of the Uniti device."""
+        # TODO implement
         return None
 
