@@ -1,3 +1,4 @@
+from .remote import UnitiRemote
 
 class NaimUniti(UnitiRemote):
     """Class that adds functionality to what is already created in the UnitiRemote class."""

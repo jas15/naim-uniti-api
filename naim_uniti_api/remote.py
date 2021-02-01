@@ -11,30 +11,36 @@ class UnitiRemote:
         return f"Remote to control Uniti device at {self.ip_address}"
 
     def current_volume(self):
+        # tested works
         return int(get_current_value(self.base_url, "levels/room", "volume"))
 
     def _change_volume(self, new_value):
-        data = { "volume": new_value }}
-        return put_new_value(self.base_url, "levels/room", data=data)
+        # tested works
+        path = f"levels/room?volume={new_value}"
+        return put_new_value(self.base_url, path)
 
     def volume_up(self, increment=1):
+        # tested works
         vol = self.current_volume()
         if vol is not None:
-            return self._change_volume(vol + increment)
+            return self._change_volume(min(vol + increment, 100))
 
         return None
 
     def volume_down(self, increment=1):
+        # tested works
         vol = self.current_volume()
         if vol is not None:
-            return self._change_volume(vol - increment)
+            return self._change_volume(max(vol - increment, 0))
 
         return None
 
     def mute_status(self):
+        # tested works
         return int(get_current_value(self.base_url, "levels/room", "mute"))
 
     def toggle_mute(self):
+        # tested works
         # get the current mute status
         current_status = self.mute_status()
 
@@ -42,29 +48,33 @@ class UnitiRemote:
         if current_status is not None:
             new_status = 0 if current_status > 0 else 1
             data = { "mute": new_status }
-            response = put_new_value(self.base_url, "levels/room", data)
+            path = f"levels/room?mute={new_status}"
+            response = put_new_value(self.base_url, path)
             return response
 
         return None
 
     def power_status(self):
         """Returns power status of the Uniti device - 0 for OFF, 1 for ON."""
+        # tested works
         current_state = get_current_value(self.base_url, "power", "system")
-        return current_state == "on"
+        return current_state
 
     def power_toggle(self):
         """Toggles the power status of the Uniti device."""
+        # tested works
         # get the current power status
-        is_on = self.power_status()
+        is_on = self.power_status() == "on"
 
         # set it to the opposite
         action = "lona" if is_on else "on"
-        data = { "system": action }
-        response = put_new_value(self.base_url, "power", data=data)
+        path = f"power?system={action}"
+        response = put_new_value(self.base_url, path)
 
-        return self.power_status()
+        return self.power_status() == "on"
 
     def _control_playback(self, action):
+        # tested works
         return get_current_value(
                 self.base_url,
                 "nowplaying",
@@ -72,17 +82,21 @@ class UnitiRemote:
         )
 
     def play_pause(self):
-            return self._control_playback("playpause")
+        # tested works
+        return self._control_playback("playpause")
 
     def previous_track(self):
+        # tested works
         return self._control_playback("prev")
 
     def next_track(self):
+        # tested works
         return self._control_playback("next")
 
     def now_playing(self):
         """Returns information about the current track."""
-        return get_current_value(self.base_url, "nowplaying")
+        path = get_current_value(self.base_url, "inputs/playqueue", value="current")
+        return get_current_value(self.base_url, path)
 
     def home(self):
         """Show the Home screen on the Uniti device."""

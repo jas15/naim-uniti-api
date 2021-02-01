@@ -1,7 +1,5 @@
 from setuptools import setup
 
-
-
 setup(
     name='NaimUnitiAPI',
     version='0.1.0',
@@ -10,6 +8,6 @@ setup(
     scripts=['scripts/example.py'],
     license='LICENSE.txt',
     description='A for-personal-use API to control Naim Uniti devices.',
-    long_description=open('README.txt').read(),
+    long_description=open('README.md').read(),
     install_requires=[ ],
 )
