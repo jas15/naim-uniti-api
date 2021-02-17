@@ -1,6 +1,7 @@
 # TODO this script should create a new Uniti station given an IP arg,
 # port number and optional --test arg, then call a few as-yet-undefined things.
 from naim_uniti_api import UnitiRemote
+import os
 import argparse
 import readchar
 import tkinter
@@ -23,7 +24,7 @@ def get_choices_and_responses():
         readchar.key.UP: ("Volume up", "Upping the volume.", '\u2191'),
         readchar.key.DOWN: ("Volume down", "Lowering it.", '\u2193'),
         "v": ("Current volume", "Here you go."),
-        "m": ("Mute", "Muting."),
+        "m": ("Mute", "Toggling mute."),
         "n": ("What's playing", "Here's some info."),
         readchar.key.LEFT: ("Previous song", "Playing the previous song.", '\u2190'),
         readchar.key.RIGHT: ("Next song", "Playing the next song.", '\u2192'),
@@ -35,11 +36,13 @@ def get_choices_and_responses():
 
 def make_choice(remote, choice):
     options = get_choices_and_responses()
+    os.system('clear')
     valid = True
     if choice == readchar.key.SPACE:
         remote.play_pause()
     elif choice == "v":
-        print(remote.current_volume())
+        print("Volume: " + str(remote.current_volume()))
+        valid = False
     elif choice == readchar.key.UP:
         remote.volume_up(increment=5)
     elif choice == readchar.key.DOWN:
@@ -47,9 +50,17 @@ def make_choice(remote, choice):
     elif choice == "m":
         remote.toggle_mute()
     elif choice == "n":
-        print(remote.now_playing())
+        print("Now playing:")
+        np = remote.now_playing()
+        track = np["name"]
+        artist = np["artistName"]
+        album = np["albumName"]
+        print(f"{track} by {artist} from {album}")
+        valid = False
     elif choice == "p":
+        print("Power:")
         print(remote.power_status())
+        valid = False
     elif choice == "P":
         remote.power_toggle()
     elif choice == readchar.key.LEFT:
@@ -72,6 +83,22 @@ def get_arguments():
     parser.add_argument("--port", required=False, type=str, dest="port")
 
     return parser.parse_args()
+
+
+def print_info(remote, print_playing=True, print_volume=True):
+    if print_playing:
+        np = remote.now_playing()
+        track = np["name"]
+        artist = np["artistName"]
+        album = np["albumName"]
+        print(f"Playing: {track} by {artist} from {album}")
+
+    if print_volume:
+        print("Volume: " + str(remote.current_volume()))
+
+    muted = remote.mute_status()
+    if muted is not None and muted > 0:
+        print("Muted.")
 
 
 ### MAIN PROGRAM ###
@@ -97,4 +124,5 @@ if __name__ == '__main__':
 
         # Respond to the user's choice.
         make_choice(remote, choice)
+        print_info(remote, choice != "n", choice != "v")
 
